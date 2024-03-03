@@ -3,7 +3,7 @@ import Header from './component/Header';
 import { BrowserRouter } from 'react-router-dom'
 function App() {
   return (
-    <div>
+    <div className='flex flex-col gap-10'>
       <div>
         <Header />
       </div>

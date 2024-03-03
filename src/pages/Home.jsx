@@ -8,7 +8,7 @@ function Home() {
         <div className="w-8/12">
  <StockInfo  />
         </div>
-         <div  className="w-4/12">
+         <div  className="w-3/12">
           <StockLists/>
          </div>
           

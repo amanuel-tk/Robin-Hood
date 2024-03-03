@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Target the scrollbar */
+::-webkit-scrollbar {
+    width: 5px; /* Set the width of the scrollbar */
+  }
+  
+  /* Handle of the scrollbar */
+  ::-webkit-scrollbar-thumb {
+    background-color: #888; /* Set the color of the scrollbar handle */
+    border-radius: 5px; /* Set the border radius of the scrollbar handle */
+  }
+  
+  /* Track of the scrollbar */
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Set the background of the scrollbar track */
+  }
+  
