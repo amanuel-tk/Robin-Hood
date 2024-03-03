@@ -1,6 +1,6 @@
 import React from "react";
 import StockInfo from "../component/Detail/StockInfo";
-import StockLists from "../component/Detail/StockLists";
+import BuySell from "../component/Detail/BuySell";
 import AboutStock from "../component/Detail/AboutStock";
 function Detail() {
   return (
@@ -11,7 +11,7 @@ function Detail() {
           <AboutStock />
         </div>
         <div className="w-3/12">
-          <StockLists />
+        <BuySell />
         </div>
       </div>
     </div>

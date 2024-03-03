@@ -1,6 +1,6 @@
 import React from "react";
 import HomeWelcome from "../component/Home/HomeWelcome";
-import StockLists from "../component/Detail/StockLists";
+import StockLists from "../component/Home/StockLists";
 
 function Home() {
   return (
