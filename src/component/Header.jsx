@@ -43,9 +43,16 @@ function Header() {
           <span className=" hover:cursor-pointer hover:text-green-500">
             Notifications
           </span>
-          <span className=" hover:cursor-pointer hover:text-green-500">
-            Account
-          </span>
+
+          <div class="dropdown">
+            <span className=" hover:cursor-pointer hover:text-green-500 dropbtn hover:bg-white">
+              Account
+            </span>
+            <div class="dropdown-content">
+              <span className=" cursor-pointer hover:text-green-500">Profile</span>
+              <span className=" cursor-pointer hover:text-green-500">Log Out</span>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-row flex-nowrap gap-4">
