@@ -22,6 +22,11 @@ function Header() {
                 <span className=' hover:cursor-pointer hover:text-green-500'>Notifications</span>
                 <span className=' hover:cursor-pointer hover:text-green-500'>Account</span>
             </div>
+
+            <div>
+                <span>Login</span>
+                <span>Sign up</span>
+            </div>
            
         </div>
     </div>
