@@ -11,7 +11,7 @@ const Spinner = () => {
           width: '50px',
           height: '50px',
           animation: 'spin 1s linear infinite',
-          marginBottom: '10px', // Added margin for better spacing
+          marginBottom: '10px', 
         }}></div>
         <p>Loading...</p>
       </div>
@@ -27,4 +27,4 @@ const Spinner = () => {
   );
 };
 
-export default Spinner;
+export default Spinner; // Exporting Spinner component

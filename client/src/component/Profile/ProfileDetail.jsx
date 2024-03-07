@@ -6,61 +6,65 @@ import { useNavigate } from "react-router-dom";
 function ProfileDetail({ profileData }) {
   const auth = useAuth();
   const navigate = useNavigate();
-  
+
+  // Function to get the year from a date string
   function getYear() {
     const dateString = "2024-03-05T16:58:36.947Z";
     const date = new Date(dateString);
     const year = date.getFullYear();
     return year;
-  } 
-  const token = 'pk_7a198a348fd94d629443f457047fcc8c'; // State for fetched prices
+  }
+  // Token for fetching stock prices
+  const token = process.env.REACT_APP_API_TOKEN;;
 
-  const [stockPrices, setStockPrices] = useState({}); // State for fetched prices
+  const [stockPrices, setStockPrices] = useState({});
   const [delay, setDelay] = useState(1000); // Initial delay of 1 second
 
   useEffect(() => {
+    // Function to fetch stock prices
     const fetchStockPrices = async () => {
-        const symbols = profileData.userData.boughtStocks.map((stock) => stock.symbol);
+      const symbols = profileData.userData.boughtStocks.map(
+        (stock) => stock.symbol
+      );
 
-        // Filter out duplicate symbols
-        const uniqueSymbols = Array.from(new Set(symbols));
+      // Filter out duplicate symbols
+      const uniqueSymbols = Array.from(new Set(symbols));
 
-        try {
-            for (let i = 0; i < uniqueSymbols.length; i++) {
-                const symbol = uniqueSymbols[i];
+      try {
+        for (let i = 0; i < uniqueSymbols.length; i++) {
+          const symbol = uniqueSymbols[i];
 
-                // Check if the symbol's price has already been fetched
-                if (stockPrices[symbol]) {
-                    continue; // Skip fetching if the price already exists
-                }
+          // Check if the symbol's price has already been fetched
+          if (stockPrices[symbol]) {
+            continue; // Skip fetching if the price already exists
+          }
 
-                // Delay between requests
-                await new Promise((resolve) => setTimeout(resolve, delay));
+          // Delay between requests
+          await new Promise((resolve) => setTimeout(resolve, delay));
 
-                const response = await fetch(
-                    `https://api.iex.cloud/v1/data/core/quote/${symbol}?token=${token}`
-                );
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch data for symbol: ${symbol}`);
-                }
-                const data = await response.json();
+          const response = await fetch(
+            `https://api.iex.cloud/v1/data/core/quote/${symbol}?token=${token}`
+          );
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data for symbol: ${symbol}`);
+          }
+          const data = await response.json();
 
-                setStockPrices((prevPrices) => ({
-                    ...prevPrices,
-                    [symbol]: data[0].latestPrice,
-                }));
-            }
-        } catch (error) {
-            console.error("Error fetching stock prices:", error);
-            // Handle the error (e.g., display an error message)
+          setStockPrices((prevPrices) => ({
+            ...prevPrices,
+            [symbol]: data[0].latestPrice,
+          }));
         }
+      } catch (error) {
+        // Handle the error here (e.g., display an error message)
+      }
     };
 
     fetchStockPrices();
-}, [profileData]);
- // Re-run useEffect when profileData changes
+  }, [profileData, delay, stockPrices]); // Re-run useEffect when profileData changes
+  // Re-run useEffect when profileData changes
 
-  console.log(stockPrices['AAPL'])
+  // Function to calculate profit
   function calculateProfit(quantityType, quantity, purchasePrice, latestPrice) {
     let profit = 0;
 
@@ -76,7 +80,8 @@ function ProfileDetail({ profileData }) {
     // Return the calculated profit
     return parseFloat(profit.toFixed(3));
   }
-  function handleSell(stockId,quantity,quantityType,symbol) {
+  // Function to handle stock selling
+  function handleSell(stockId, quantity, quantityType, symbol) {
     if (localStorage.getItem("token")) {
       fetch(`http://localhost:4000/user/sell/${stockId}`, {
         method: "DELETE",
@@ -84,11 +89,15 @@ function ProfileDetail({ profileData }) {
           "Content-Type": "application/json",
           Authorization: `${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ price: stockPrices[symbol],quantity,quantityType }),
+        body: JSON.stringify({
+          price: stockPrices[symbol],
+          quantity,
+          quantityType,
+        }),
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Failed to remove stock");
+            // Handle error, show error message, etc.
           }
           return response.json();
         })
@@ -102,19 +111,17 @@ function ProfileDetail({ profileData }) {
             auth.logout();
             navigate("/login");
           }
-          console.error("Error removing stock:", error);
           // Handle error, show error message, etc.
         });
     }
-  } 
-
+  }
 
   const [totalProfit, setTotalProfit] = useState(0);
 
   useEffect(() => {
     // Calculate total profit whenever profileData or stockPrices change
     let sum = 0;
-    profileData.userData.boughtStocks.forEach(stock => {
+    profileData.userData.boughtStocks.forEach((stock) => {
       const profit = calculateProfit(
         stock.quantityType,
         stock.quantity,
@@ -126,7 +133,7 @@ function ProfileDetail({ profileData }) {
     setTotalProfit(sum);
   }, [profileData, stockPrices]);
 
-
+  // JSX for rendering the profile details
   return (
     <div className="w-6/12 max-sm:w-11/12 max-md:w-11/12 max-lg:w-11/12 max-xl:w-11/12">
       {profileData && (
@@ -153,7 +160,9 @@ function ProfileDetail({ profileData }) {
             </div>
           </div>
           <div className="flex flex-col gap-1 pt-10 pl-1">
-            <span className="text-2xl font-semibold">{profileData.userData.balance}$</span>
+            <span className="text-2xl font-semibold">
+              {profileData.userData.balance}$
+            </span>
             <span className="text-base font-normal">Total in Robinhood</span>
           </div>
           <div className="flex flex-col gap-5 pt-10">
@@ -165,9 +174,13 @@ function ProfileDetail({ profileData }) {
                   <span>Total investing value</span>
                   <span>{profileData.userData.balance}$</span>
                 </div>
-                <div className={`${totalProfit>=0?"text-green-500":"text-red-500"} flex flex-row flex-nowrap justify-between text-green-500 font-medium`}>
+                <div
+                  className={`${
+                    totalProfit >= 0 ? "text-green-500" : "text-red-500"
+                  } flex flex-row flex-nowrap justify-between text-green-500 font-medium`}
+                >
                   <span>Total investing Profit</span>
-                  <span >{parseFloat(totalProfit.toFixed(3))}$</span>
+                  <span>{parseFloat(totalProfit.toFixed(3))}$</span>
                 </div>
                 <div className="flex flex-row flex-nowrap justify-between text-gray-500">
                   <span>Total Number Of Stocks Owned</span>
@@ -194,19 +207,19 @@ function ProfileDetail({ profileData }) {
                   </tr>
                 </thead>
                 {profileData.userData.boughtStocks.map((stock, index) => {
-              let profit = calculateProfit(
-                stock.quantityType,
-                stock.quantity,
-                stock.purchasePrice,
-                stockPrices[stock.symbol]
-              );
+                  let profit = calculateProfit(
+                    stock.quantityType,
+                    stock.quantity,
+                    stock.purchasePrice,
+                    stockPrices[stock.symbol]
+                  );
                   return (
                     <thead className=" border-b-2 " key={index}>
                       <tr
-                    className={`${
-                      profit >= 0 ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
+                        className={`${
+                          profit >= 0 ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
                         <td>{index + 1}</td>
                         <td>{stock.symbol}</td>
                         <td>{stock.quantityType}</td>
@@ -214,17 +227,25 @@ function ProfileDetail({ profileData }) {
                         <td>{stock.purchasePrice}</td>
                         <td>{new Date(stock.timestamp).toLocaleString()}</td>
 
-                        <td>  <td>{profit}$</td></td>
+                        <td>
+                          {" "}
+                          <td>{profit}$</td>
+                        </td>
                         <td
-                      onClick={() => {
-                        handleSell(stock._id,stock.quantity,stock.quantityType,stock.symbol);
-                      }}
-                      className={`text-white flex justify-center  ${
-                        profit >= 0 ? "bg-green-500" : "bg-red-500"
-                      } px-1 rounded-md py-1 font-semibold cursor-pointer hover:scale-105`}
-                    >
-                      Sell
-                    </td>
+                          onClick={() => {
+                            handleSell(
+                              stock._id,
+                              stock.quantity,
+                              stock.quantityType,
+                              stock.symbol
+                            );
+                          }}
+                          className={`text-white flex justify-center  ${
+                            profit >= 0 ? "bg-green-500" : "bg-red-500"
+                          } px-1 rounded-md py-1 font-semibold cursor-pointer hover:scale-105`}
+                        >
+                          Sell
+                        </td>
                       </tr>
                     </thead>
                   );

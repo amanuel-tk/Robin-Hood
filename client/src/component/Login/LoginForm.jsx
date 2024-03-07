@@ -4,18 +4,18 @@ import { NavLink, useNavigate,useLocation } from "react-router-dom";
 import { useAuth } from "../../pages/Auth";
 
 function LoginForm() {
-  const auth=useAuth()
-  const location=useLocation()
+  const auth = useAuth(); // Initializing useAuth hook
+  const location = useLocation(); // Initializing useLocation hook
 
-  const redirectPath=location.state?.path||'/'
-  
-  const [formData, setFormData] = useState({
+  const redirectPath = location.state?.path || '/'; // Setting the redirect path
+
+  const [formData, setFormData] = useState({ // Initializing state for form data
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initializing useNavigate hook
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { // Event handler for form input change
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -34,20 +34,20 @@ function LoginForm() {
         auth.login(data.token)
         localStorage.setItem("token", data.token); // Store the token in local storage
         // Redirect to homepage or any other route after successful login
-        navigate(redirectPath,{replace:true}); 
+        navigate(redirectPath,{replace:true});
       } else {
         // Handle error response
-        console.error("Login failed");
+        
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+     
     }
   };
 
   return (
     <div className=" bg-slate-100 flex justify-center items-center h-[89vh] ">
-      <div className="w-3/12 max-sm:w-full max-md:w-10/12 max-lg:w-8/12 max-xl:w-6/12 max-2xl:5/12 flex flex-col gap-5 py-10 justify-center items-center bg-white">
-        <form onSubmit={handleSubmit}>
+ 
+        <form className="w-3/12 max-sm:w-full max-md:w-10/12 max-lg:w-8/12 max-xl:w-6/12 max-2xl:5/12 flex flex-col gap-5 py-10 justify-center items-center bg-white" onSubmit={handleSubmit}>
           <div>
             <h1 className="text-3xl font-semibold">Login</h1>
           </div>
@@ -94,7 +94,7 @@ function LoginForm() {
             </span>
           </div>
         </form>
-      </div>
+    
     </div>
   );
 }

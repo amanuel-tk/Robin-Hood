@@ -8,7 +8,7 @@ function LineGraphForLists() {
 
   const formattedLabels = stockData.map((stock) => {
     const date = new Date(stock.x);
-    return date.toLocaleDateString(); // Format date to display only the date part
+    return date.toLocaleDateString(); 
   });
 
   const data = {
@@ -52,7 +52,6 @@ function LineGraphForLists() {
       date.setDate(i);
       value = value + Math.round(Math.random() * Math.random() * 10);
       data.push({ x: date, y: value });
-      // console.log(value);
     }
     setStockData(data);
   }

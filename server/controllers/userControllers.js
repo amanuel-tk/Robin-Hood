@@ -1,24 +1,31 @@
 const user = require('../model/userModel');
-const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { ObjectId } = require('mongodb');
 
+// Controller function to register a new user
 const registerUser = async (req, res) => {
+    // Extract user details from request body
     const { name, email, password } = req.body;
+    // Check if user with given email already exists
     const userExists = await user.findOne({ email });
+    // If user already exists, return error message
     if (userExists) {
         return res.status(400).json({ message: 'User exists. Please login.' });
     }
 
+    // Generate salt and hash password
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
+    // Create new user in database
     const newUser = await user.create({
         name: name,
         email,
         password: hashPassword,
     });
 
+    // If user creation is successful, generate JWT token
     if (newUser) {
         // Generate JWT token
         const token = jwt.sign({ userId: newUser._id }, "abcd", {
@@ -35,9 +42,13 @@ const registerUser = async (req, res) => {
         return res.status(404).json({ message: "Invalid data" });
     }
 };
-const loginUser = async (req, res) => {
-    const { email, password } = req.body;
 
+// Controller function to log in a user
+const loginUser = async (req, res) => {
+
+    // Extract email and password from request body    
+    const { email, password } = req.body;
+    // If email is not provided, return error message
     if (!email) {
         return res.status(400).json({ message: 'Please fill in all fields' });
     }
@@ -48,7 +59,7 @@ const loginUser = async (req, res) => {
         const token = jwt.sign({ userId: users._id }, "abcd", {
             expiresIn: '1h' // Token expiry time
         });
-
+        // Return user details and token in response
         return res.status(200).json({
             _id: users.id,
             name: users.name,
@@ -61,7 +72,10 @@ const loginUser = async (req, res) => {
 
 };
 
+// Controller function to buy a stock
 const buyStock = async (req, res) => {
+
+    // Extract details of the stock purchase from request body
     const { quantityType, amount, symbol, price } = req.body;
     // console.log(symbol);
 
@@ -69,12 +83,15 @@ const buyStock = async (req, res) => {
         // Find the user in the database
         const stock = await user.findById(req.user.id);
 
+        // If user is not found, return error message
         if (!stock) {
             return res.status(400).json({ message: 'User not found' });
         }
+
+        // Calculate total purchase amount based on quantity type
         const totalPurchaseAmount = quantityType === 'dollar' ? amount : amount * price;
 
-    
+
         // Deduct the purchase amount from the user's balance
         stock.balance -= totalPurchaseAmount;
 
@@ -97,6 +114,7 @@ const buyStock = async (req, res) => {
     }
 };
 
+// Controller function to retrieve stocks by symbol
 const getStocksBySymbol = async (req, res) => {
     const { symbol } = req.params; // Assuming symbol is passed as a route parameter
 
@@ -118,8 +136,8 @@ const getStocksBySymbol = async (req, res) => {
     }
 };
 
-const { ObjectId } = require('mongodb');
 
+// Controller function to sell a stock
 const sellStock = async (req, res) => {
     // console.log( req.user.id)
     const userId = req.user._id;
@@ -127,7 +145,7 @@ const sellStock = async (req, res) => {
     try {
 
         const { symbol } = req.params;
-        const { price,quantity,quantityType } = req.body;
+        const { price, quantity, quantityType } = req.body;
         //   console.log(symbol);
 
         const sellMyStock = await await user.findById(req.user.id) // Replace with proper user retrieval
@@ -145,7 +163,7 @@ const sellStock = async (req, res) => {
 
         const totalPurchaseAmount = quantityType === 'dollar' ? quantity : quantity * price;
 
-    
+
         // Deduct the purchase amount from the user's balance
         sellMyStock.balance += totalPurchaseAmount;
 
@@ -158,8 +176,10 @@ const sellStock = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+// Controller function to retrieve user profile
 const profile = async (req, res) => {
-    console.log( req.user.id)
+    // console.log(req.user.id)
     try {
         const userData = await user.findById(req.user.id).select('-password');
         if (!userData) {
@@ -174,7 +194,8 @@ const profile = async (req, res) => {
     }
 }
 
-const recharge= async (req,res)=>{
+// Controller function to recharge user balance
+const recharge = async (req, res) => {
     try {
         const userData = await user.findById(req.user.id);
         if (!userData) {
@@ -187,10 +208,10 @@ const recharge= async (req,res)=>{
 
         // Save the updated user data to the database
         await userData.save();
-        if(userData){
-            console.log(userData)
+        if (userData) {
+            // console.log(userData)
             return res.status(200).json({ message: 'Success fully recharged.' });
-        }else{
+        } else {
             return res.status(400).json({ message: 'Please try again' });
         }
     } catch (error) {
@@ -200,7 +221,7 @@ const recharge= async (req,res)=>{
 }
 
 
-
+// Export user controller functions
 module.exports = {
     registerUser,
     loginUser,

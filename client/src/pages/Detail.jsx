@@ -12,17 +12,18 @@ function Detail() {
   const socketRef = useRef(null); // Ref to hold the socket instance
 
   let params = useParams();
-
-    // Use the 'symbol' variable here to fetch data related to the symbol from the URL
-    // alert(params.symbol);
-  
+  // Effect to establish and manage socket connection
   useEffect(() => {
     // Create the socket instance
     socketRef.current = io.connect("http://localhost:4000/detail");
 
     // Listen for 'data' event from the socket
     socketRef.current.emit("stockInfo", params.symbol.toUpperCase());
-    socketRef.current.emit("timeFrameSelected", "1D",params.symbol.toUpperCase());
+    socketRef.current.emit(
+      "timeFrameSelected",
+      "1D",
+      params.symbol.toUpperCase()
+    );
 
     socketRef.current.on("stockInfo", (data) => {
       // console.log(data[0])
@@ -30,35 +31,38 @@ function Detail() {
     });
     socketRef.current.on("data", (data) => {
       // console.log(data);
-      if(data[0]){
-      if (data[0].minute) {
-        const newData = data
-          .filter((entry) => entry.close !== null)
-          .map((entry) => ({ date: entry.minute, price: entry.close }));
-        setGraphData(newData);
-      } else if(data[0].priceDate) {
-        const newData = data
-          .filter((entry) => entry.close !== null)
-          .map((entry) => ({ date: entry.priceDate, price: entry.close }));
-        setGraphData(newData);
-      }}
+      if (data[0]) {
+        if (data[0].minute) {
+          const newData = data
+            .filter((entry) => entry.close !== null)
+            .map((entry) => ({ date: entry.minute, price: entry.close }));
+          setGraphData(newData);
+        } else if (data[0].priceDate) {
+          const newData = data
+            .filter((entry) => entry.close !== null)
+            .map((entry) => ({ date: entry.priceDate, price: entry.close }));
+          setGraphData(newData);
+        }
+      }
     });
-
-    // Clean-up function to disconnect the socket when the component unmounts
     return () => {
       socketRef.current.disconnect();
     };
   }, [params.symbol]);
-  // console.log(stockData);
   // Function to handle time frame button click
   const handleTimeFrameButtonClick = (timeFrame) => {
     if (socketRef.current) {
-      socketRef.current.emit("timeFrameSelected", timeFrame,params.symbol.toUpperCase());
+      socketRef.current.emit(
+        "timeFrameSelected",
+        timeFrame,
+        params.symbol.toUpperCase()
+      );
     } else {
       console.error("Socket is not initialized.");
     }
   };
 
+  // JSX rendering
   return (
     <div className="flex justify-center ">
       <div className="flex flex-col w-9/12 max-sm:w-11/12 max-md:w-11/12 max-lg:w-11/12 max-xl:w-11/12 ">
@@ -77,9 +81,8 @@ function Detail() {
           </div>
         </div>
         <div className="w-10/12 max-sm:w-11/12 max-md:w-11/12">
-             {stockData && <AboutStock stockData={stockData} />}
+          {stockData && <AboutStock stockData={stockData} />}
         </div>
-     
       </div>
     </div>
   );

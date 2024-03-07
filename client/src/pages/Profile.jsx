@@ -5,13 +5,13 @@ import { useAuth } from './Auth';
 import { useNavigate } from 'react-router-dom';
 
 function Profile() {
-  const auth = useAuth();
-  const navigate = useNavigate();
+  const auth = useAuth(); // Accessing authentication state and functions
+  const navigate = useNavigate(); // Hook for navigation
 
-  const [error, setError] = useState(null);
-  const [profileData, setProfileData] = useState(null);
+  const [profileData, setProfileData] = useState(null); // State for profile data
 
   useEffect(() => {
+    // Fetching user profile data from the server
     fetch('http://localhost:4000/user/profile', {
       method: 'GET',
       headers: {
@@ -20,11 +20,12 @@ function Profile() {
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to fetch profile data');
+        //handle Error here
       }
       return response.json();
     })
     .then(data => {
+      // Setting profile data state after successful fetch
       setProfileData(data);
     })
     .catch(error => {
@@ -32,14 +33,14 @@ function Profile() {
         auth.logout();
         navigate("/login");
       }
-      setError(error.message);
+      
     });
-  }, [auth,navigate]);
+  }, [auth,navigate]);// Dependency array including auth and navigate to prevent infinite loop
 
   if (!profileData) {
-    return <div><Loading/></div>;
+    return <div><Loading/></div>; // Rendering loading component while profile data is being fetched
   }
-  console.log(profileData)
+  // Rendering profile detail component after profile data is available
   return (
     <div className='flex justify-center'>{profileData&&<ProfileDetail profileData={profileData} />}</div>
   )

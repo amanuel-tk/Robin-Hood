@@ -4,13 +4,16 @@ import { useAuth } from "../../pages/Auth";
 import { useNavigate } from "react-router-dom";
 
 function AboutStock({ stockData }) {
-  // Empty dependency array ensures the effect runs only once
+  // Define necessary hooks and state
   const auth = useAuth();
   const navigate = useNavigate();
   let params = useParams();
   const [myStocks, setMyStocks] = useState([]);
   const symbol = params.symbol.toUpperCase(); // Symbol of the stock to retrieve
+
+  // Fetch user's stocks data from the server
   useEffect(() => {
+    // Ensure user is authenticated before making the request
     if (localStorage.getItem("token")) {
       fetch(`http://localhost:4000/user/stocks/${symbol}`, {
         headers: {
@@ -26,18 +29,18 @@ function AboutStock({ stockData }) {
         .then((data) => {
           // Handle the retrieved stocks data
           setMyStocks(data);
-          // console.log('Stocks:', data);
         })
         .catch((error) => {
+          // Handle authentication error
           if (error.response && error.response.status === 401) {
             auth.logout();
             navigate("/login");
           }
-          console.error("Error retrieving stocks:", error);
         });
     }
   }, [symbol, auth, navigate]);
 
+  // Function to calculate profit from selling a stock
   function calculateProfit(quantityType, quantity, purchasePrice, latestPrice) {
     let profit = 0;
 
@@ -54,7 +57,7 @@ function AboutStock({ stockData }) {
     return parseFloat(profit.toFixed(3));
   }
 
-  function handleSell(stockId,quantity,quantityType) {
+  function handleSell(stockId, quantity, quantityType) {
     if (localStorage.getItem("token")) {
       fetch(`http://localhost:4000/user/sell/${stockId}`, {
         method: "DELETE",
@@ -62,7 +65,11 @@ function AboutStock({ stockData }) {
           "Content-Type": "application/json",
           Authorization: `${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ price: stockData.latestPrice,quantity,quantityType }),
+        body: JSON.stringify({
+          price: stockData.latestPrice,
+          quantity,
+          quantityType,
+        }),
       })
         .then((response) => {
           if (!response.ok) {
@@ -71,28 +78,30 @@ function AboutStock({ stockData }) {
           return response.json();
         })
         .then((data) => {
+          // Notify user about successful stock sale
           alert("Stock sold successfully");
           window.location.reload();
-          // Optionally, update state or perform any necessary actions after successful removal
         })
         .catch((error) => {
+          // Handle authentication error
           if (error.response && error.response.status === 401) {
             auth.logout();
             navigate("/login");
           }
-          console.error("Error removing stock:", error);
-          // Handle error, show error message, etc.
         });
     }
-  } 
-  // console.log(myStocks);
+  }
+  // JSX rendering
   return (
     <div>
+      {/* Render stock information if available */}
       {stockData && (
         <div className="flex flex-col gap-4">
           <div className=" pb-4">
+            {/* Render user's stock holdings */}
             <span className="font-bold text-2xl">My Stocks</span>
           </div>
+          {/* Render stock holdings table */}
           <table className="bg-white w-full   p-4 h-24">
             <thead>
               <tr className=" text-lg font-bold underline">
@@ -106,6 +115,7 @@ function AboutStock({ stockData }) {
                 <td>Action</td>
               </tr>
             </thead>
+            {/* Map through user's stocks to render each row */}
             {myStocks.map((stock, index) => {
               let profit = calculateProfit(
                 stock.quantityType,
@@ -130,7 +140,11 @@ function AboutStock({ stockData }) {
                     <td>{profit}$</td>
                     <td
                       onClick={() => {
-                        handleSell(stock._id,stock.quantity,stock.quantityType);
+                        handleSell(
+                          stock._id,
+                          stock.quantity,
+                          stock.quantityType
+                        );
                       }}
                       className={`text-white flex justify-center  ${
                         profit >= 0 ? "bg-green-500" : "bg-red-500"
@@ -143,7 +157,7 @@ function AboutStock({ stockData }) {
               );
             })}
           </table>
-
+          {/* Render key statistics */}
           <div className=" border-b pb-4">
             <span className="font-bold text-2xl">Key statistics</span>
           </div>

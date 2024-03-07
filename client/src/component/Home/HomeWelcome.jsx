@@ -21,7 +21,9 @@ import X18 from "../Images/18.png";
 import X19 from "../Images/19.png";
 import X20 from "../Images/20.png";
 
+// HomeWelcome component
 function HomeWelcome() {
+  // Array containing items with their names and corresponding images
   const items = [
     { name: "Crypto Commodity ETFs", image: X1 },
     { name: "24 Hour Market", image: X2 },
@@ -45,21 +47,35 @@ function HomeWelcome() {
   ];
   return (
     <div>
+      {/* Displaying HomeIcon image */}
       <div className="flex flex-col gap-10">
         <div className="pt-8">
           <img src={HomeIcon} alt="" className="w-11/12 h-80" />
         </div>
+        {/* Displaying welcome message */}
         <div>
-          <span className=" text-5xl font-semibold">Welcome to Robinhood</span>
+          <span className="text-5xl font-semibold">Welcome to Robinhood</span>
         </div>
-        <div className=" flex flex-col gap-6">
-          <span className=" text-2xl font-semibold border-b pb-6">Discover investments</span>
+        {/* Displaying list of investment options */}
+        <div className="flex flex-col gap-6">
+          <span className="text-2xl font-semibold border-b pb-6">
+            Discover investments
+          </span>
+          {/* Iterating through items and displaying them */}
           <div className="flex flex-row flex-wrap gap-1">
             {items.map((list, key) => {
               return (
-                <div key={key} className=" hover:bg-gray-100 flex flex-row flex-nowrap gap-2 border rounded-full w-fit py-1 px-2 items-center">
-                  <img src={list.image} alt="" className=" rounded-full w-7 h-7" />
-                  <span className=" font-medium text-sm">{list.name}</span>
+                // Displaying each item with image and name
+                <div
+                  key={key}
+                  className="hover:bg-gray-100 flex flex-row flex-nowrap gap-2 border rounded-full w-fit py-1 px-2 items-center"
+                >
+                  <img
+                    src={list.image}
+                    alt=""
+                    className="rounded-full w-7 h-7"
+                  />
+                  <span className="font-medium text-sm">{list.name}</span>
                 </div>
               );
             })}

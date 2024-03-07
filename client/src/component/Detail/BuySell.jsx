@@ -3,12 +3,14 @@ import axios from "axios";
 import { useAuth } from "../../pages/Auth";
 import { useNavigate } from "react-router-dom";
 function BuySell({ stockData }) {
-  const [activeBuyOrSell, setActiveBuyOrSell] = useState("buy");
+  // State and hooks initialization
   const navigate = useNavigate();
   const [quantityType, setQuantityType] = useState("dollar"); // Default to dollars
   const [amount, setAmount] = useState(0);
   const auth = useAuth();
   const [profileData, setProfileData] = useState(null);
+
+  // Fetch user profile data
   useEffect(() => {
     fetch("http://localhost:4000/user/profile", {
       method: "GET",
@@ -26,12 +28,14 @@ function BuySell({ stockData }) {
         setProfileData(data);
       })
       .catch((error) => {
+        // Handle authentication error
         if (error.response && error.response.status === 401) {
           auth.logout();
           navigate("/login");
         }
       });
   }, [auth, navigate]);
+  // Function to calculate total investment amount
   function calculate(amount, latestPrice) {
     if (quantityType === "dollar") {
       return amount;
@@ -39,12 +43,15 @@ function BuySell({ stockData }) {
       return latestPrice * amount;
     }
   }
-
+  // Function to handle buying stocks
   const handleBuy = () => {
     // Prepare the data to send to the backend
     if (localStorage.getItem("token")) {
       if (amount) {
-        if (calculate(amount, stockData.latestPrice)<=profileData.userData.balance) {
+        if (
+          calculate(amount, stockData.latestPrice) <=
+          profileData.userData.balance
+        ) {
           const data = {
             quantityType: quantityType,
             amount: amount,
@@ -73,7 +80,6 @@ function BuySell({ stockData }) {
                 auth.logout();
                 navigate("/login");
               }
-              // You can display an error message to the user or handle the error in another way
             });
         } else {
           alert("Please recharge first.");
@@ -85,17 +91,21 @@ function BuySell({ stockData }) {
       alert("Please login first.");
     }
   };
+  // JSX rendering
   return (
     <div>
       {stockData && (
         <div className="border p-4 flex flex-col  gap-3">
+          {/* Buy section header */}
           <div className="font-bold text-lg flex flex-row flex-nowrap  ">
             <span className="cursor-pointer text-green-500">
               Buy {stockData.symbol}
             </span>
           </div>
           <hr />
+          {/* Form for buying stocks */}
           <div className="pt-3 flex flex-col gap-6">
+            {/* Investment type selection */}
             <div className="flex flex-row justify-between items-center">
               <span className="font-medium text-base">Invest In</span>
               <select
@@ -119,11 +129,13 @@ function BuySell({ stockData }) {
                 className="border w-24 h-10 rounded-md p-2 outline-none"
               />
             </div>
+            {/* Market price display */}
             <div className=" font-semibold text-green-500 font-lg flex flex-row flex-nowrap  justify-between">
               <span>Market Price</span>
               <span>${stockData.latestPrice}</span>
             </div>
             <hr />
+            {/* Estimated shares or price display */}
             <div className=" font-semibold  font-lg flex flex-row  justify-between">
               <span>
                 {quantityType === "dollar"
@@ -148,6 +160,7 @@ function BuySell({ stockData }) {
               Buy
             </span>
           </div>
+          {/* User balance display */}
           <div className=" text-green-500 flex justify-center pt-3">
             {profileData && (
               <span>
