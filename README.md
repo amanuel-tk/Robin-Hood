@@ -93,9 +93,11 @@ To deploy this project run the following commands.
 
 ## Screenshots
 
-![App Screenshot](screen shoot/photo_1_2024-03-07_20-26-30.jpg)
-![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_1_2024-03-07_20-26-30.jpg?raw=true)
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_1_2024-03-07_20-26-30.jpg?raw=true) ![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_3_2024-03-07_20-26-30.jpg?raw=true)
+![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_4_2024-03-07_20-26-30.jpg?raw=true)
+![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_2_2024-03-07_20-26-30.jpg?raw=true)
+
 
 
 ## Note
