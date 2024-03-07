@@ -25,22 +25,6 @@ To run this project, you will need to add the following environment variables to
 `REACT_APP_API_TOKEN=pk_***************************`
 
 
-
-
-
-## Features
-
-- Search For stocks
-- Create user account
-- Buy and Sell Stock 
-- Check Profit and loss on total or per stock 
-- Live stock previews
-- Live stock graph previews and historical data performance
-- Cross platform
-- Responsive
-
-
-
 ## Deployment
 
 To deploy this project run the following commands.
@@ -91,18 +75,19 @@ To deploy this project run the following commands.
 
 
 
-## Screenshots
+## Features
+
+- Search For stocks
+- Create user account
+- Buy and Sell Stock 
+- Check Profit and loss on total or per stock 
+- Live stock previews
+- Live stock graph previews and historical data performance
+- Cross platform
+- Responsive
 
 
-![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_1_2024-03-07_20-26-30.jpg?raw=true) ![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_3_2024-03-07_20-26-30.jpg?raw=true)
-![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_4_2024-03-07_20-26-30.jpg?raw=true)
-![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_2_2024-03-07_20-26-30.jpg?raw=true)
 
-
-
-## Note
-
-"If you encounter a loading issue where the page gets stuck, it is due to limitations on API requests that iex offer for a free trial. So, Please wait a few moments and try again."
 
 ## Tech Stack
 
@@ -111,4 +96,27 @@ To deploy this project run the following commands.
 **Server:** Node, Express
 
 **Data Base:** Mongo DB
+
+
+
+
+## Note
+
+"If you encounter a loading issue where the page gets stuck, it is due to limitations on API requests that iex offer for a free trial. So, Please wait a few moments and try again."
+
+
+
+
+
+
+## Screenshots
+
+
+![Home Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_1_2024-03-07_20-26-30.jpg?raw=true) 
+![Detail Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_3_2024-03-07_20-26-30.jpg?raw=true)
+![Search Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_4_2024-03-07_20-26-30.jpg?raw=true)
+![Login Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_2_2024-03-07_20-26-30.jpg?raw=true)
+
+
+
 
