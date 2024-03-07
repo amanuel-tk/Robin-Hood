@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Logo from "../Images/logo.svg";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../pages/Auth";
 
 function SignUpForm() {
   const navigate = useNavigate();
@@ -12,6 +13,10 @@ function SignUpForm() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const auth=useAuth()
+  const location=useLocation()
+
+  const redirectPath=location.state?.path||'/'
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -23,12 +28,16 @@ function SignUpForm() {
         body: JSON.stringify(formData),
       });
       if (response.ok) {
+
         const data = await response.json();
-        // Store the token in state
-        // Optionally, you can store the token in local storage here
-        localStorage.setItem("token", data.token);
-        // Handle successful registration, redirect, etc.
-        navigate("/");
+        auth.login(data.token)
+        localStorage.setItem("token", data.token); // Store the token in local storage
+        // Redirect to homepage or any other route after successful login
+        navigate(redirectPath,{replace:true});
+
+
+
+
       } else {
         const errorData = await response.json(); // Parse error response
         alert(errorData.message);

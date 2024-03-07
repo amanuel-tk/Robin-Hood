@@ -15,7 +15,7 @@ function StockInfo({graphData,handleTimeFrame,stockData}) {
       <div className=" h-[53vh] flex flex-col gap-6">
         <div className="flex flex-col gap-1">
           <h1 className=" text-3xl font-semibold">{stockData.symbol}</h1>
-          <span className=" text-3xl font-semibold">{stockData.latestPrice}</span>
+          <span className=" text-3xl font-semibold">{stockData.latestPrice}$</span>
           <span className={`text-sm font-semibold ${stockData.change>=0 ?"text-green-500" : " text-red-500"}`}>{stockData.change >= 0?"+":""}${ parseFloat(stockData.change.toFixed(3))} ({ parseFloat(stockData.changePercent.toFixed(3))} %)</span>
         </div>
         <div className="">

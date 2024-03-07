@@ -62,16 +62,21 @@ const loginUser = async (req, res) => {
 };
 
 const buyStock = async (req, res) => {
-    const { quantityType, amount, symbol,price } = req.body;
-    console.log(symbol);
+    const { quantityType, amount, symbol, price } = req.body;
+    // console.log(symbol);
 
     try {
         // Find the user in the database
-        const stock = await user.findOne({ email: 'z@gmail.com' });
+        const stock = await user.findById(req.user.id);
 
         if (!stock) {
             return res.status(400).json({ message: 'User not found' });
         }
+        const totalPurchaseAmount = quantityType === 'dollar' ? amount : amount * price;
+
+    
+        // Deduct the purchase amount from the user's balance
+        stock.balance -= totalPurchaseAmount;
 
         // Add the bought stock to the user's boughtStocks array
         stock.boughtStocks.push({
@@ -94,66 +99,115 @@ const buyStock = async (req, res) => {
 
 const getStocksBySymbol = async (req, res) => {
     const { symbol } = req.params; // Assuming symbol is passed as a route parameter
-    
+
     try {
-      // Find the user in the database
-      const  userFind= await user.findOne({ email: 'z@gmail.com' });
-  
-      if (!userFind) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Filter the user's boughtStocks array based on the symbol
-      const stocks = userFind.boughtStocks.filter(stock => stock.symbol === symbol);
-  
-      return res.status(200).json(stocks); // Send the filtered stocks array back to the client
+        // Find the user in the database
+        const userFind = await await user.findById(req.user.id);
+
+        if (!userFind) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Filter the user's boughtStocks array based on the symbol
+        const stocks = userFind.boughtStocks.filter(stock => stock.symbol === symbol);
+
+        return res.status(200).json(stocks); // Send the filtered stocks array back to the client
     } catch (error) {
-      console.error('Error retrieving stocks:', error);
-      return res.status(500).json({ message: 'Internal server error' }); // Handle the error gracefully
+        console.error('Error retrieving stocks:', error);
+        return res.status(500).json({ message: 'Internal server error' }); // Handle the error gracefully
     }
-  };
+};
 
-  const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
-  const sellStock = async (req, res) => {
-      try {
-          const { symbol } = req.params;
-          console.log(symbol);
-  
-          const sellMyStock = await user.findOne({ email: 'z@gmail.com' }); // Replace with proper user retrieval
-          if (!sellMyStock) {
-              return res.status(404).json({ message: 'User not found' });
-          }
-  
-          const stockIndex = sellMyStock.boughtStocks.findIndex(stock => stock._id.equals(new ObjectId(symbol)));
-          console.log(stockIndex);
-          if (stockIndex === -1) {
-              return res.status(404).json({ message: 'Stock not found in user\'s portfolio' });
-          }
-  
-          // Simulate selling logic (update user's virtual portfolio)
-          // - Deduct selling price (mocked in a demo) from user's buying power
-          // ... (implement selling logic here)
-  
-          // Remove the stock from the boughtStocks array
-          sellMyStock.boughtStocks.splice(stockIndex, 1);
-  
-          // Save the updated user document to persist the change in the database
-          await sellMyStock.save();
-  
-          res.json({ message: 'Stock sold successfully' }); // Or provide more specific message
-      } catch (error) {
-          console.error('Error selling stock:', error);
-          res.status(500).json({ message: 'Internal server error' });
-      }
-  }
-  
+const sellStock = async (req, res) => {
+    // console.log( req.user.id)
+    const userId = req.user._id;
+    console.log(userId)
+    try {
+
+        const { symbol } = req.params;
+        const { price,quantity,quantityType } = req.body;
+        //   console.log(symbol);
+
+        const sellMyStock = await await user.findById(req.user.id) // Replace with proper user retrieval
+        if (!sellMyStock) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const stockIndex = sellMyStock.boughtStocks.findIndex(stock => stock._id.equals(new ObjectId(symbol)));
+        //   console.log(stockIndex);
+        if (stockIndex === -1) {
+            return res.status(404).json({ message: 'Stock not found in user\'s portfolio' });
+        }
+
+        sellMyStock.boughtStocks.splice(stockIndex, 1);
+
+        const totalPurchaseAmount = quantityType === 'dollar' ? quantity : quantity * price;
+
+    
+        // Deduct the purchase amount from the user's balance
+        sellMyStock.balance += totalPurchaseAmount;
+
+        // Save the updated user document to persist the change in the database
+        await sellMyStock.save();
+
+        res.json({ message: 'Stock sold successfully' }); // Or provide more specific message
+    } catch (error) {
+        console.error('Error selling stock:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+const profile = async (req, res) => {
+    console.log( req.user.id)
+    try {
+        const userData = await user.findById(req.user.id).select('-password');
+        if (!userData) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user data without the password
+        res.json({ userData });
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+const recharge= async (req,res)=>{
+    try {
+        const userData = await user.findById(req.user.id);
+        if (!userData) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user data without the password
+        const amountToAdd = 1000; // Example amount to add
+        userData.balance += amountToAdd;
+
+        // Save the updated user data to the database
+        await userData.save();
+        if(userData){
+            console.log(userData)
+            return res.status(200).json({ message: 'Success fully recharged.' });
+        }else{
+            return res.status(400).json({ message: 'Please try again' });
+        }
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
 
 module.exports = {
     registerUser,
     loginUser,
     buyStock,
     getStocksBySymbol,
-    sellStock
+    sellStock,
+    profile,
+    recharge,
     // Add other exported functions as needed
 };

@@ -52,7 +52,7 @@ function LineGraphForLists() {
       date.setDate(i);
       value = value + Math.round(Math.random() * Math.random() * 10);
       data.push({ x: date, y: value });
-      console.log(value);
+      // console.log(value);
     }
     setStockData(data);
   }

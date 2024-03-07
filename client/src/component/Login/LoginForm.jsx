@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import Logo from "../Images/logo.svg";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate,useLocation } from "react-router-dom";
 import { useAuth } from "../../pages/Auth";
 
 function LoginForm() {
-  const [user,setUser]=useState('')
   const auth=useAuth()
+  const location=useLocation()
+
+  const redirectPath=location.state?.path||'/'
   
   const [formData, setFormData] = useState({
     email: "",
@@ -32,7 +34,7 @@ function LoginForm() {
         auth.login(data.token)
         localStorage.setItem("token", data.token); // Store the token in local storage
         // Redirect to homepage or any other route after successful login
-        navigate("/");
+        navigate(redirectPath,{replace:true}); 
       } else {
         // Handle error response
         console.error("Login failed");

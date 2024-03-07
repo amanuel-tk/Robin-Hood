@@ -32,7 +32,7 @@ app.use('/user',require('./route/userRoutes'))
 
 
 homeNamespace.on("connection", (socket) => {
-    // console.log("Connected & Socket id is", socket.id);
+    console.log("Connected & Socket id is", socket.id);
 
     // Function to fetch stock data for a single symbol
     const fetchStockData = (symbol) => {
@@ -82,7 +82,7 @@ homeNamespace.on("connection", (socket) => {
                 socket.emit("data", data); // Emit data to the client
             })
             .catch((error) => {
-                // console.error("Error fetching stock data:", error);
+                console.error("Error fetching stock data:", error);
             });
     };
 
@@ -94,14 +94,14 @@ homeNamespace.on("connection", (socket) => {
 
     // Handle disconnection
     socket.on("disconnect", () => {
-        // console.log("Disconnected & Socket id is", socket.id);
+        console.log("Disconnected & Socket id is", socket.id);
         clearInterval(intervalId); // Clear the interval when client disconnects
     });
 });
 
 
 detailNamespace.on("connection", (socket) => {
-    // console.log("Connected & Socket id is detail", socket.id);
+    console.log("Connected & Socket id is detail", socket.id);
     let lastStockSymbol;
     const stockTimeFrameGraph = (timeFrame, symbol) => {
         const endpoint = `https://cloud.iexapis.com/stable/stock/${symbol}/chart/${timeFrame}?token=${token}`
@@ -110,11 +110,11 @@ detailNamespace.on("connection", (socket) => {
                 socket.emit("data", response.data);
             })
             .catch(error => {
-                // console.error('Error:', error);
+                console.error('Error:', error);
             });
     };
     socket.on("timeFrameSelected", (timeFrame, symbol) => {
-        // console.log('Received timeframe:', timeFrame);
+        console.log('Received timeframe:', timeFrame);
         stockTimeFrameGraph(timeFrame, symbol);
     });
 
@@ -131,7 +131,7 @@ detailNamespace.on("connection", (socket) => {
             })
             .catch(error => {
                 // Handle error
-                // console.error('Error:', error);
+                console.error('Error:', error);
             });
     }
 
@@ -143,12 +143,12 @@ detailNamespace.on("connection", (socket) => {
     const intervalId = setInterval(callStockInfo, 1000);
 
     socket.on("stockInfo", (stockSymbol) => {
-        // console.log('Received timeframe:', stockSymbol);
+        // console.log('Received ti    meframe:', stockSymbol);
         stockInfo(stockSymbol);
     });
 
     socket.on("disconnect", () => {
-        // console.log("Disconnected & Socket id is", socket.id);
+        console.log("Disconnected & Socket id is", socket.id);
         clearInterval(intervalId);
     });
 });

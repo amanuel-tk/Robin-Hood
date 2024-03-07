@@ -3,21 +3,23 @@ const asyncHandler = require('express-async-handler')
 const User = require('../model/userModel')
 
 const authProtect = asyncHandler(async (req, res, next) => {
-    const token = req.cookies.userToken
-    try {
-        const decode = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = await User.findById(decode.id).select('-password')
-        next()
+    const token = req.headers.authorization;
 
-    } catch (error) {
-        res.status(401).cookie('userToken', '', { expires: new Date('2024-01-01') });
-        throw new Error('Not Authorized no token')
-    }
+
     if (!token) {
-        res.status(401).cookie('userToken', '', { expires: new Date('2024-01-01') });
-        throw new Error('Not Authorized no token')
+        console.log(not)
+        return res.status(401).json({ message: 'Not Authorized: no token' });
     }
-})
+
+    try {
+        const decoded = jwt.verify(token,"abcd");
+        req.user= await User.findById(decoded.userId).select('-password');
+        next();
+    } catch (error) {
+        return res.status(401).json({ message: 'Not Authorized: invalid token' });
+    }
+});
+
 
 module.exports = {
     authProtect
