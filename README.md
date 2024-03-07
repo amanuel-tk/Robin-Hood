@@ -93,12 +93,20 @@ To deploy this project run the following commands.
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](screen shoot/photo_1_2024-03-07_20-26-30.jpg)
+![App Screenshot](https://github.com/amanuel-tk/Robin-Hood/blob/main/screen%20shoot/photo_1_2024-03-07_20-26-30.jpg?raw=true)
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
 
 ## Note
 
 "If you encounter a loading issue where the page gets stuck, it is due to limitations on API requests that iex offer for a free trial. So, Please wait a few moments and try again."
+
+## Tech Stack
+
+**Client:** React, TailwindCSS
+
+**Server:** Node, Express
+
+**Data Base:** Mongo DB
 
